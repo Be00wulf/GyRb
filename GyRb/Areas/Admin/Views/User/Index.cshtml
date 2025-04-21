@@ -9,11 +9,11 @@
 @* <h2>This is a user controller</h2> *@
 
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "Index";
 }
 
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1">Add User</a>
+    <a class="btn btn-primary mb-1" asp-action="Register" asp-controller="User" >Add User</a>
     <div class="card">
         <div class="card-header bg-primary">
             <h4 class="text-white">List of users</h4>
