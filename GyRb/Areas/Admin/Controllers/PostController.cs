@@ -3,6 +3,7 @@ using System.Security.Policy;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using GyRb.Data;
 using GyRb.Models;
+using GyRb.Utilites;
 using GyRb.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,9 +32,32 @@ namespace GyRb.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            //return View();
+            var listOfPosts = new List<Post>();
+
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+            if (loggedInUserRole[0] == WebsiteRoles.WebsiteAdmin)
+            {
+                listOfPosts = await _context.Posts!.Include(x => x.ApplicationUser).ToListAsync();
+            }
+            else
+            {
+                listOfPosts = await _context.Posts!.Include(x => x.ApplicationUser).Where(x => x.ApplicationUser!.Id == loggedInUser!.Id).ToListAsync();
+            }
+
+            var listOfPostsVM = listOfPosts.Select(x => new PostVM()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                CreatedDate = x.CreatedDate,
+                ThumbnailUrl = x.ThumbnailUrl,
+                AuthorName = x.ApplicationUser!.FirstName + " " + x.ApplicationUser.LastName
+            }).ToList();
+            return View(listOfPostsVM);
         }
 
         [HttpGet]
@@ -74,12 +98,30 @@ namespace GyRb.Areas.Admin.Controllers
 
             await _context.Posts!.AddAsync(post);
             await _context.SaveChangesAsync();
-            _notification.Success("Post created successfully");
+            _notification.Success("Post Creado Satisfactoriamente");
             return RedirectToAction("Index");
 
-            return View();
+            //return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var post = await _context.Posts!.FirstOrDefaultAsync(x => x.Id == id);
+
+            var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+            var loggedInUserRole = await _userManager.GetRolesAsync(loggedInUser!);
+
+            if (loggedInUserRole[0] == WebsiteRoles.WebsiteAdmin || loggedInUser?.Id ==  post?.ApplicationUserId)
+            {
+                _context.Posts!.Remove(post!);
+                await _context.SaveChangesAsync();
+                _notification.Success("Post Eliminado Satisfactoriamente");
+                return RedirectToAction("Index", "Post", new { area = "Admin" });
+            }
+            return View();
+            
+        }
         private string UploadImage(IFormFile file)
         {
             string uniqueFileName = "";
