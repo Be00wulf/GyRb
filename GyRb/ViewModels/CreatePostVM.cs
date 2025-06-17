@@ -13,6 +13,6 @@ namespace GyRb.ViewModels
         public string? Description { get; set; }
         public string? ThumbnailUrl { get; set; }
         public IFormFile? Thumbnail { get; set; }
-
+        //public DateTime CreatedDate { get; set; }
     }
 }
