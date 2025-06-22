@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace GyRb.Areas.Admin.Controllers
 {
@@ -33,7 +34,7 @@ namespace GyRb.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
             //return View();
             var listOfPosts = new List<Post>();
@@ -49,7 +50,7 @@ namespace GyRb.Areas.Admin.Controllers
                 listOfPosts = await _context.Posts!.Include(x => x.ApplicationUser).Where(x => x.ApplicationUser!.Id == loggedInUser!.Id).ToListAsync();
             }
 
-            var listOfPostsVM = listOfPosts.Select(x => new PostVM()
+			var listOfPostsVM = listOfPosts.Select(x => new PostVM()
             {
                 Id = x.Id,
                 Title = x.Title,
@@ -57,7 +58,13 @@ namespace GyRb.Areas.Admin.Controllers
                 ThumbnailUrl = x.ThumbnailUrl,
                 AuthorName = x.ApplicationUser!.FirstName + " " + x.ApplicationUser.LastName
             }).ToList();
-            return View(listOfPostsVM);
+
+			int pageSize = 5;
+			int pageNumber = (page ?? 1);
+
+			var pagedList = listOfPostsVM.ToPagedList(pageNumber, pageSize);
+
+			return View(pagedList);
         }
 
         [HttpGet]

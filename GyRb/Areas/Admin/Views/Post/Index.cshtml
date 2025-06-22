@@ -1,10 +1,8 @@
-﻿@model List<GyRb.ViewModels.PostVM>
+﻿@using X.PagedList
+@model IPagedList<GyRb.ViewModels.PostVM>
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+@using X.PagedList.Mvc.Core
+@* @using X.PagedList.Web.Common *@
 
 @{
     ViewData["Title"] = "List Of Posts";
@@ -53,6 +51,18 @@
                 </div> 
             }
 
+        </div>
+        <div class="card-footer">
+            Page @(Model?.PageCount < Model?.PageNumber ? 0 : Model?.PageNumber) of @Model?.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("Index",
+                     new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+                     new PagedListRenderOptions()
+            {
+                ContainerDivClasses = new List<string> { "blog", "navigation" },
+                UlElementClasses = new List<string> { "pagination" },
+                LiElementClasses = new List<string> { "page-item", "page-link" },
+                ActiveLiElementClass = "active",
+            })
         </div>
 
     </div>
