@@ -37,7 +37,8 @@ namespace GyRb.Controllers
 
 			vm.Posts = _context.Posts!
 				.Include(x => x.ApplicationUser)
-				.OrderByDescending(p => p.Id) 
+				//.OrderByDescending(p => p.Id) 
+				.OrderByDescending(p => p.CreatedDate) 
 				.ToPagedList(pageNumber, pageSize);
 
 			return View(vm);

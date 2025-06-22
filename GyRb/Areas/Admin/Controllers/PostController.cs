@@ -62,7 +62,9 @@ namespace GyRb.Areas.Admin.Controllers
 			int pageSize = 5;
 			int pageNumber = (page ?? 1);
 
-			var pagedList = listOfPostsVM.ToPagedList(pageNumber, pageSize);
+			var pagedList = listOfPostsVM
+                .OrderByDescending(x => x.CreatedDate)
+                .ToPagedList(pageNumber, pageSize);
 
 			return View(pagedList);
         }

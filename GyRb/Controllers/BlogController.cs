@@ -17,7 +17,7 @@ namespace GyRb.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("[controller]/{slug}")]
         public IActionResult Post(string slug)
         {
             if(slug == "")
