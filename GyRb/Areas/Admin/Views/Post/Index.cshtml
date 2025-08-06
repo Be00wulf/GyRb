@@ -9,10 +9,10 @@
 }
 
 <div class="container-fluid">
-    <a class="btn btn-primary mb-1" asp-action="Create" asp-controller="Post" asp-area="Admin" >Add Post</a>
+    <a class="btn btn-danger mb-1" asp-action="Create" asp-controller="Post" asp-area="Admin" >Agregar congreso</a>
     <div class="card">
-        <div class="card-header bg-primary">
-            <h4 class="text-white">List of posts</h4>
+        <div class="card-header bg-danger">
+            <h4 class="text-white">Lista de congresos</h4>
         </div>
 
         <div class="card-body container-fluid" style="background-color: lightgray; ">
@@ -40,9 +40,9 @@
                         <div class="col-5 text-right d-flex justify-content-center flex-column">
                             <h4 style="font-size: 1rem;" class=" fw-bold">@post.AuthorName</h4>
                             <div class="d-flex justify-content-end aling-items-center" >
-                                <a class="btn btn-warning" asp-area="Admin" asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" method="post" >Edit</a> |
+                                <a class="btn btn-warning" asp-area="Admin" asp-controller="Post" asp-action="Edit" asp-route-id="@post.Id" method="post" >Editar</a> |
                                 <form asp-area="Admin" asp-controller="Post" asp-action="Delete" asp-route-id="@post.Id" method="post" onsubmit="return confirm('El post seleccionado sera eliminado')"  >
-                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
                                 </form>
 
                             </div>
