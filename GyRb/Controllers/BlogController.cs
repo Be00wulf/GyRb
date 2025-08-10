@@ -40,7 +40,8 @@ namespace GyRb.Controllers
                 CreatedDate = post.CreatedDate,
                 ThumbnailUrl = post.ThumbnailUrl,
                 Description = post.Description,
-                ShortDescription = post.ShortDescription
+                ShortDescription = post.ShortDescription,
+                FechaExpiracionRegistro = post.FechaExpiracionRegistro
             };
             return View(vm);
         }

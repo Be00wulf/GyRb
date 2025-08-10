@@ -30,9 +30,17 @@
 
                         <div class="mb-2">
                             <label>Descripción</label>
-                            <textarea id="richEditor" asp-for="Description" class="form-control" rows="8"></textarea> />
+                            @* <textarea id="richEditor" asp-for="Description" class="form-control" rows="8"></textarea> /> *@
+                            <textarea id="" asp-for="Description" class="form-control" rows="8"></textarea> 
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
+
+
+                        <div class="mb-2">
+                            <label>Fecha límite para registro</label>
+                            <input asp-for="FechaExpiracionRegistro" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="FechaExpiracionRegistro" class="text-danger"></span>
+                        </div> 
 
                     </div>
 

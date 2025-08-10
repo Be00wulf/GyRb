@@ -13,6 +13,10 @@ namespace GyRb.ViewModels
         public string? Description { get; set; }
         public string? ThumbnailUrl { get; set; }
         public IFormFile? Thumbnail { get; set; }
-        //public DateTime CreatedDate { get; set; }
+
+        //establece fecha de caducidad para registro de usuario (al vencer en el post se restringira el acceso) -> terminado
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime FechaExpiracionRegistro { get; set; }
     }
 }

@@ -72,7 +72,12 @@ namespace GyRb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new CreatePostVM());
+            var model = new CreatePostVM
+            {
+                FechaExpiracionRegistro = DateTime.Today.AddDays(7)  
+            };
+            //return View(new CreatePostVM());
+            return View(model);
         }
 
         [HttpPost]
@@ -92,8 +97,10 @@ namespace GyRb.Areas.Admin.Controllers
             post.ShortDescription = vm.ShortDescription;
             post.Description = vm.Description;
             post.ApplicationUserId = loggedInUser!.Id;
+            post.FechaExpiracionRegistro = vm.FechaExpiracionRegistro;
 
-            if(post.Title != null)
+
+            if (post.Title != null)
             {
                 string slug = vm.Title!.Trim();
                 slug = slug.Replace(" ", "-");
@@ -156,10 +163,9 @@ namespace GyRb.Areas.Admin.Controllers
                 Id = post.Id,
                 Title = post.Title,
                 ShortDescription = post.ShortDescription,
-                //ApplicationUserId = post.ApplicationUserId,
                 Description = post.Description,
                 ThumbnailUrl = post.ThumbnailUrl,
-                //CreatedDate = post.CreatedDate
+                FechaExpiracionRegistro = post.FechaExpiracionRegistro
             };
 
             return View(vm);
@@ -183,8 +189,9 @@ namespace GyRb.Areas.Admin.Controllers
             post.Title = vm.Title;
             post.ShortDescription = vm.ShortDescription;
             post.Description = vm.Description;
+            post.FechaExpiracionRegistro = vm.FechaExpiracionRegistro;
 
-            if(vm.Thumbnail != null)
+            if (vm.Thumbnail != null)
             {
                 post.ThumbnailUrl = UploadImage(vm.Thumbnail);    
             }
