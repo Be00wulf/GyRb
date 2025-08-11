@@ -36,7 +36,6 @@ namespace GyRb.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? page)
         {
-            //return View();
             var listOfPosts = new List<Post>();
 
             var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
@@ -69,6 +68,43 @@ namespace GyRb.Areas.Admin.Controllers
 			return View(pagedList);
         }
 
+        //actions and functions
+        [HttpPost]
+        public async Task<IActionResult> GenerateTickets(int postId, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                TempData["ErrorMessage"] = "La cantidad debe ser mayor a cero";
+                return RedirectToAction("Edit", new { id = postId });
+            }
+
+            var tickets = new List<TicketCode>();
+
+            for (int i = 0; i < quantity; i++)
+            {
+                string code;
+                do
+                {
+                    code = GenerateUniqueCode();
+                }
+                while (await _context.TicketCodes.AnyAsync(t => t.Code == code));
+
+                tickets.Add(new TicketCode { PostId = postId, Code = code });
+            }
+
+            _context.TicketCodes.AddRange(tickets);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"{quantity} tickets generados para el evento {postId}.";
+            return RedirectToAction("Edit", new { id = postId });
+        }
+
+        private string GenerateUniqueCode()
+        {
+            return Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+        }
+
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -76,7 +112,6 @@ namespace GyRb.Areas.Admin.Controllers
             {
                 FechaExpiracionRegistro = DateTime.Today.AddDays(7)  
             };
-            //return View(new CreatePostVM());
             return View(model);
         }
 
@@ -88,9 +123,7 @@ namespace GyRb.Areas.Admin.Controllers
                 return View(vm);
             }
 
-            //get logged in user id
             var loggedInUser = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name );
-
             var post = new Post();
             
             post.Title = vm.Title;
@@ -116,8 +149,6 @@ namespace GyRb.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
             _notification.Success("Post Creado Satisfactoriamente");
             return RedirectToAction("Index");
-
-            //return View();
         }
 
         [HttpPost]
