@@ -1,6 +1,7 @@
 ﻿using GyRb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using GyRb.ViewModels;
 
 namespace GyRb.Controllers
 {
@@ -19,35 +20,40 @@ namespace GyRb.Controllers
         }
 
         [HttpGet]
-        public IActionResult EnterCode()
+        public IActionResult EnterCode(int id)
         {
-            return View();
+            var model = new TicketCodeVM { PostId = id };
+            return View(model);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnterCode(string code)
+        public async Task<IActionResult> EnterCode(TicketCodeVM model)
         {
-            if (string.IsNullOrWhiteSpace(code))
+            Console.WriteLine($"PostId recibido: {model.PostId}, Code: {model.Code}");
+
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Debe ingresar un código.");
-                return View();
+                ViewBag.ErrorMessage = "Error: Corrige los errores e intenta de nuevo";
+                return View(model);
             }
 
             var ticket = await _context.TicketCodes
-                .FirstOrDefaultAsync(t => t.Code == code);
+                .FirstOrDefaultAsync(t => t.Code == model.Code && t.PostId == model.PostId);
 
-            if (ticket == null || ticket.UsedAt != null)
+            if (ticket != null)
             {
-                ModelState.AddModelError("", "El código es inválido o ya fue usado.");
-                return View();
+                ViewBag.SuccessMessage= "EL CODIGO ES VALIDO, SE LE REDIRECCIONARA A LA PANTALLA DE REGISTRO";
+                // redireccion -> pendiente
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "El código ingresado no es válido para este evento";
             }
 
-            
-
-            TempData["ValidCode"] = ticket.Code;
-            return RedirectToAction("RegisterAttendee");
+            return View(model);
         }
+
+
 
         public IActionResult RegisterAttendee()
         {
